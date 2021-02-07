@@ -1,12 +1,53 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
-import { View, Text } from 'react-native';
-import Box from '../components/box';
+import React, { useContext } from 'react';
+import { StyleSheet } from 'react-native';
+import MapView from 'react-native-maps';
+import Geocoder from 'react-native-geocoder';
+import { PositionContext } from '../app';
+
 function MapScreen({ navigation }) {
+    const positionContext = useContext(PositionContext);
+    const styles = StyleSheet.create({
+        map: {
+            ...StyleSheet.absoluteFillObject,
+        },
+    });
+    async function onMapPress(e) {
+        let country = { name: '', code: '' };
+        // Position Geocoding
+        var position = {
+            lat: e.nativeEvent.coordinate.latitude,
+            lng: e.nativeEvent.coordinate.longitude,
+        };
+        const res = await Geocoder.geocodePosition(position);
+        console.log('res', res);
+        if (res.length > 0) {
+            const point = res[0];
+            country = {
+                name: point.country || point.feature,
+                code: point.countryCode,
+            };
+        }
+        console.log('country', country);
+        positionContext.positionDispacth(
+            {
+                type: 'update',
+                payload: country,
+            }
+        );
+        navigation.navigate("Videos");
+    }
     return (
-        <Box flex={1} justifyContent="center" alignItems="center" >
-            <Text>Coming Soon...</Text>
-        </Box >
+        <MapView
+            zoomEnabled={false}
+            onPress={onMapPress.bind(this)}
+            style={styles.map}
+            initialRegion={{
+                latitude: positionContext.positionState.lat,
+                longitude: positionContext.positionState.long,
+                latitudeDelta: 20,
+                longitudeDelta: 20,
+            }} />
     );
 }
 export default MapScreen;
