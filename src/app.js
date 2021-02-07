@@ -13,6 +13,8 @@ const Tab = createBottomTabNavigator();
 
 export const PositionContext = React.createContext();
 
+
+//initial state for videos and map
 const initialState = {
     lat: 41.09976790255183,
     long: 28.244213797152042,

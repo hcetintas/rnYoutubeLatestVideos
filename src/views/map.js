@@ -12,6 +12,7 @@ function MapScreen({ navigation }) {
             ...StyleSheet.absoluteFillObject,
         },
     });
+    //get location info
     async function onMapPress(e) {
         let country = { name: '', code: '' };
         // Position Geocoding
@@ -20,7 +21,6 @@ function MapScreen({ navigation }) {
             lng: e.nativeEvent.coordinate.longitude,
         };
         const res = await Geocoder.geocodePosition(position);
-        console.log('res', res);
         if (res.length > 0) {
             const point = res[0];
             country = {
@@ -28,14 +28,13 @@ function MapScreen({ navigation }) {
                 code: point.countryCode,
             };
         }
-        console.log('country', country);
         positionContext.positionDispacth(
             {
                 type: 'update',
                 payload: country,
             }
         );
-        navigation.navigate("Videos");
+        navigation.navigate('Videos');
     }
     return (
         <MapView
